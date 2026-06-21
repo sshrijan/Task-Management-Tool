@@ -9,6 +9,26 @@ namespace TaskManagementToolWebApi.Data
         {
         }
 
-        //public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<TaskItem> TaskItems { get; set; }
+        public DbSet<Project> Projects { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Enum stored as string instead of int
+            modelBuilder.Entity<TaskItem>()
+                .Property(t => t.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<TaskItem>()
+                .Property(t => t.Priority)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<User>()
+                .Property(t => t.Role)
+                .HasConversion<string>();
+        }
     }
 }

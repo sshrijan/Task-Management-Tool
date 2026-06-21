@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManagementToolWebApi.Data;
+using TaskManagementToolWebApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,29 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new User
+        {
+            Name = "Admin",
+            Email = "admin@gmail.com",
+            PasswordHash = "admin123", // temporary for now
+            Role = UserRole.Admin,
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
+        });
+
+        db.SaveChanges();
+    }
+}
 
 app.Run();
